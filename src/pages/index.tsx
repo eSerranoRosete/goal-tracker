@@ -15,6 +15,8 @@ const GoalPage: NextPage = () => {
 
   const [updateOverlay, setUpdateOverlay] = useState(false);
 
+  const [addOverlay, setAddOverlay] = useState(false);
+
   const [goalDescription, setGoalDescription] = useState("");
 
   const createGoal = (e: FormEvent<HTMLFormElement>) => {
@@ -24,10 +26,13 @@ const GoalPage: NextPage = () => {
         description: goalDescription,
       },
       {
-        onSuccess: () => goals.refetch(),
+        onSuccess: () => {
+          goals.refetch();
+          setAddOverlay(!addOverlay);
+          e.currentTarget.reset();
+        },
       }
     );
-    e.currentTarget.reset();
   };
 
   const currentDay = new Date().getDate();
@@ -45,7 +50,7 @@ const GoalPage: NextPage = () => {
               <div className="mt-3 grid grid-cols-2 gap-3">
                 <button
                   type="button"
-                  className="rounded-md border border-indigo-600 bg-indigo-600 py-1 hover:bg-indigo-800"
+                  className="rounded-md border border-indigo-600 bg-indigo-600 py-1 hover:bg-opacity-40"
                   onClick={() => {
                     dayMutation.mutate(
                       {
@@ -65,7 +70,7 @@ const GoalPage: NextPage = () => {
                 </button>
                 <button
                   type="button"
-                  className="rounded-md border border-neutral-700 bg-neutral-800 py-1 hover:bg-transparent"
+                  className="rounded-md border border-neutral-700 bg-neutral-800 py-1 hover:bg-opacity-40"
                   onClick={() => {
                     dayMutation.mutate(
                       {
@@ -88,7 +93,7 @@ const GoalPage: NextPage = () => {
                 <summary className="cursor-pointer">More Options</summary>
                 <button
                   type="button"
-                  className="mt-2 w-full rounded-md border border-rose-800 bg-rose-800/10 py-1 text-base text-rose-500 hover:bg-rose-800/5"
+                  className="mt-2 w-full rounded-md border border-rose-800 bg-rose-900/5 py-1 text-base text-neutral-100 hover:bg-rose-900/20"
                   onClick={() => {
                     deleteGoalMutation.mutate(
                       {
@@ -114,32 +119,64 @@ const GoalPage: NextPage = () => {
           </div>
         </div>
       )}
-      <div className="m-auto max-w-md p-10">
-        <form className="m-auto mb-10 w-full" onSubmit={(e) => createGoal(e)}>
-          <label htmlFor="name">
-            Goal Description:
-            <input
-              type="text"
-              name="name"
-              className="mt-2 block w-full rounded-md border border-neutral-700 bg-transparent py-2 px-4 text-neutral-100"
-              required
-              onChange={(e) => setGoalDescription(e.target.value)}
+
+      {addOverlay && (
+        <div className="absolute z-50 flex h-screen w-full items-center justify-center bg-black/80 p-5">
+          <div className="relative w-full max-w-md rounded-md border border-neutral-800 bg-neutral-900 p-5">
+            <div className="mb-5 text-xl">Set New Goal</div>
+            <form
+              className="m-auto mb-10 w-full"
+              onSubmit={(e) => createGoal(e)}
+            >
+              <label htmlFor="name">
+                Goal Description:
+                <input
+                  type="text"
+                  name="name"
+                  className="mt-2 block w-full rounded-md border border-neutral-700 bg-transparent py-2 px-4 text-neutral-100"
+                  required
+                  onChange={(e) => setGoalDescription(e.target.value)}
+                />
+              </label>
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <button
+                  type="submit"
+                  className="rounded-md border border-indigo-600 bg-indigo-600 py-1 hover:bg-opacity-40"
+                >
+                  Set Goal
+                </button>
+                <button
+                  type="button"
+                  className="rounded-md border border-neutral-700 bg-neutral-800 py-1 hover:bg-opacity-40"
+                  onClick={() => setAddOverlay(!addOverlay)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+            <XMarkIcon
+              onClick={() => setAddOverlay(!addOverlay)}
+              className="absolute top-2 right-2 w-5 cursor-pointer"
             />
-          </label>
+          </div>
+        </div>
+      )}
+      <div className="m-auto max-w-md p-10">
+        <div className="flex">
+          <span className="grow">My Goals:</span>
           <button
-            type="submit"
-            className="mt-2 w-full rounded-md border border-indigo-600 bg-indigo-600 p-2 text-center text-white hover:bg-indigo-800"
+            onClick={() => setAddOverlay(!addOverlay)}
+            className="rounded-full border border-indigo-600 bg-indigo-600 px-4 py-1 text-sm hover:bg-opacity-40"
           >
-            Set Goal
+            Set New
           </button>
-        </form>
-        <h5>My Goals:</h5>
+        </div>
         <hr className="mt-2 mb-5 opacity-20" />
         <ul>
           {goals.data.map((goal) => (
             <li
               key={goal.id}
-              className="mb-5 cursor-pointer rounded-md p-2 hover:bg-neutral-800/50"
+              className="mb-5 cursor-pointer rounded-md border border-neutral-800 bg-neutral-800/30 p-2 hover:bg-neutral-800/50"
               onClick={() => {
                 setUpdateOverlay(!updateOverlay);
                 setTargetGoal({
@@ -155,14 +192,16 @@ const GoalPage: NextPage = () => {
                 {goal.days.map((day, index) => (
                   <div
                     key={day.id}
-                    className={`mr-1.5 inline-block h-4 w-4 rounded-sm border leading-none ${
-                      index + 1 < currentDay
-                        ? "border-neutral-100/10 bg-neutral-800"
-                        : day.isCompleted
+                    className={`relative mr-1.5 inline-flex h-4 w-4 items-center justify-center rounded-sm border leading-none ${
+                      day.isCompleted
                         ? "border-green-500 bg-green-500/80 shadow-md shadow-green-500/30"
-                        : "border-green-500/30 bg-green-500/10"
+                        : "border-neutral-500/20 bg-neutral-800/50"
                     }`}
-                  ></div>
+                  >
+                    {index + 1 == currentDay && (
+                      <div className="absolute h-2 w-2 rounded-full bg-white"></div>
+                    )}
+                  </div>
                 ))}
               </div>
             </li>
