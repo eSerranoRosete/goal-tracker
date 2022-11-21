@@ -37,7 +37,33 @@ const GoalPage: NextPage = () => {
 
   const currentDay = new Date().getDate();
 
-  if (!goals.data) return <div>Loading Goals...</div>;
+  if (!goals.data)
+    return (
+      <div className="flex h-screen w-full items-center justify-center">
+        <div className="flex items-center">
+          <svg
+            className="mr-2 h-6 w-6 animate-spin"
+            viewBox="0 0 236 236"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M118 236C183.17 236 236 183.17 236 118C236 52.8303 183.17 0 118 0C52.8303 0 0 52.8303 0 118C0 183.17 52.8303 236 118 236ZM118.5 195C160.75 195 195 160.75 195 118.5C195 76.2502 160.75 42 118.5 42C76.2502 42 42 76.2502 42 118.5C42 160.75 76.2502 195 118.5 195Z"
+              className="fill-neutral-500/50"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M2.27774 97.0337C0.223963 108.487 9.85314 118 21.4887 118V118C33.0716 118 42.1874 108.471 45.3853 97.3381C54.565 65.3815 84.0123 42 118.921 42C154.004 42 183.571 65.6159 192.592 97.8179C195.642 108.706 204.547 118 215.854 118V118C227.213 118 236.608 108.716 234.651 97.5277C224.958 42.1162 176.608 0 118.421 0C60.4065 0 12.1706 41.8661 2.27774 97.0337Z"
+              fill="#4C46E3"
+            />
+          </svg>
+          Loading Goals...
+        </div>
+      </div>
+    );
 
   return (
     <div className="w-full">
@@ -124,10 +150,7 @@ const GoalPage: NextPage = () => {
         <div className="absolute z-50 flex h-screen w-full items-center justify-center bg-black/80 p-5">
           <div className="relative w-full max-w-md rounded-md border border-neutral-800 bg-neutral-900 p-5">
             <div className="mb-5 text-xl">Set New Goal</div>
-            <form
-              className="m-auto mb-10 w-full"
-              onSubmit={(e) => createGoal(e)}
-            >
+            <form className="m-auto w-full" onSubmit={(e) => createGoal(e)}>
               <label htmlFor="name">
                 Goal Description:
                 <input
