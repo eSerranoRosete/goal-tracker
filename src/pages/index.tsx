@@ -185,7 +185,7 @@ const GoalPage: NextPage = () => {
         </div>
       )}
       <div className="m-auto max-w-md p-10">
-        <div className="flex">
+        <div className="flex items-center">
           <span className="grow">My Goals:</span>
           <button
             onClick={() => setAddOverlay(!addOverlay)}
@@ -222,7 +222,7 @@ const GoalPage: NextPage = () => {
                     }`}
                   >
                     {index + 1 == currentDay && (
-                      <div className="absolute h-2 w-2 rounded-full bg-white"></div>
+                      <div className="absolute h-1.5 w-1.5 rounded-full bg-white"></div>
                     )}
                   </div>
                 ))}
