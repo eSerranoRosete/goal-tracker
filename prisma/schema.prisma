@@ -1,0 +1,32 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model Task {
+  id     String  @id @default(cuid())
+  name   String
+  isDone Boolean
+}
+
+model Goal {
+  id          String @id @default(cuid())
+  description String
+  days        Day[]
+}
+
+model Day {
+  id          String  @id @default(cuid())
+  isCompleted Boolean @default(false)
+  Goal        Goal?   @relation(fields: [goalId], references: [id], onDelete: Cascade)
+  goalId      String?
+}
